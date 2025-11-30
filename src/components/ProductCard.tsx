@@ -2,6 +2,8 @@ import { Heart, ShoppingCart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
 
 interface ProductCardProps {
   id: string;
@@ -24,9 +26,21 @@ export const ProductCard = ({
   image,
   badge,
 }: ProductCardProps) => {
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const discount = originalPrice
     ? Math.round(((originalPrice - price) / originalPrice) * 100)
     : 0;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    addToCart(id);
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    toggleWishlist(id);
+  };
 
   return (
     <Card className="group overflow-hidden border border-border hover:shadow-[var(--shadow-hover)] transition-[box-shadow] duration-300">
@@ -47,8 +61,11 @@ export const ProductCard = ({
               -{discount}%
             </span>
           )}
-          <button className="absolute top-2 right-2 p-2 bg-card rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-primary hover:text-primary-foreground">
-            <Heart className="h-4 w-4" />
+          <button 
+            onClick={handleToggleWishlist}
+            className="absolute top-2 right-2 p-2 bg-card rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-primary hover:text-primary-foreground"
+          >
+            <Heart className={`h-4 w-4 ${isInWishlist(id) ? "fill-red-500 text-red-500" : ""}`} />
           </button>
         </div>
       </Link>
@@ -85,7 +102,11 @@ export const ProductCard = ({
           )}
         </div>
 
-        <Button className="w-full bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary transition-all duration-300" size="sm">
+        <Button 
+          onClick={handleAddToCart}
+          className="w-full bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary transition-all duration-300" 
+          size="sm"
+        >
           <ShoppingCart className="h-4 w-4 mr-2" />
           Add to Cart
         </Button>

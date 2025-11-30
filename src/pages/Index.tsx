@@ -5,87 +5,37 @@ import { CategoryCard } from "@/components/CategoryCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Truck, ShieldCheck, CreditCard, Headphones } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import heroBanner from "@/assets/hero-banner.jpg";
 import electronicsCategory from "@/assets/electronics-category.jpg";
 import fashionCategory from "@/assets/fashion-category.jpg";
 import homeCategory from "@/assets/home-category.jpg";
 
+type Product = Tables<"products">;
+
 const Index = () => {
-  // Mock data for featured products
-  const featuredProducts = [
-    {
-      id: "1",
-      name: "Premium Wireless Headphones with Noise Cancellation",
-      price: 159.99,
-      originalPrice: 199.99,
-      rating: 4.5,
-      reviews: 234,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
-      badge: "Best Seller",
-    },
-    {
-      id: "2",
-      name: "Smart Watch Series 7 with Fitness Tracking",
-      price: 299.99,
-      originalPrice: 399.99,
-      rating: 4.8,
-      reviews: 567,
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
-      badge: "Hot Deal",
-    },
-    {
-      id: "3",
-      name: "Professional Camera Kit with Lenses",
-      price: 1299.99,
-      rating: 4.9,
-      reviews: 123,
-      image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500&q=80",
-    },
-    {
-      id: "4",
-      name: "Designer Leather Handbag Collection",
-      price: 189.99,
-      originalPrice: 249.99,
-      rating: 4.6,
-      reviews: 89,
-      image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80",
-    },
-    {
-      id: "5",
-      name: "Ultra HD 4K Smart Television 55 inch",
-      price: 699.99,
-      originalPrice: 899.99,
-      rating: 4.7,
-      reviews: 456,
-      image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=500&q=80",
-      badge: "New Arrival",
-    },
-    {
-      id: "6",
-      name: "Ergonomic Gaming Chair with RGB Lighting",
-      price: 349.99,
-      rating: 4.4,
-      reviews: 178,
-      image: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=500&q=80",
-    },
-    {
-      id: "7",
-      name: "Portable Bluetooth Speaker Waterproof",
-      price: 79.99,
-      originalPrice: 99.99,
-      rating: 4.5,
-      reviews: 312,
-      image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80",
-    },
-    {
-      id: "8",
-      name: "Mechanical Keyboard RGB Backlit",
-      price: 129.99,
-      rating: 4.6,
-      reviews: 234,
-      image: "https://images.unsplash.com/photo-1595225476474-87563907a212?w=500&q=80",
-    },
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, []);
+
+  const fetchFeaturedProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("is_featured", true)
+        .limit(8);
+
+      if (error) throw error;
+      setFeaturedProducts(data || []);
+    } catch (error) {
+      console.error("Error fetching featured products:", error);
+    }
+  };
 
   const categories = [
     {
@@ -216,7 +166,17 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {featuredProducts.map((product) => (
-                <ProductCard key={product.id} {...product} />
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  name={product.name}
+                  price={product.price}
+                  originalPrice={product.original_price || undefined}
+                  rating={product.rating || 0}
+                  reviews={product.reviews_count || 0}
+                  image={product.image_url || ""}
+                  badge={product.badge || undefined}
+                />
               ))}
             </div>
           </div>
