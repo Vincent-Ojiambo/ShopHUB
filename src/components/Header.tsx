@@ -1,9 +1,28 @@
-import { Search, ShoppingCart, User, Heart, Menu } from "lucide-react";
+import { Search, ShoppingCart, User, Heart, Menu, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/use-auth";
+import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
+  const { user, signOut } = useAuth();
+  const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
       {/* Top bar */}
@@ -11,8 +30,20 @@ export const Header = () => {
         <div className="container mx-auto px-4 py-2 flex items-center justify-between text-sm">
           <p>Welcome to our marketplace! Shop with confidence</p>
           <div className="flex items-center gap-4">
-            <Link to="/auth" className="hover:underline">Sign In</Link>
-            <Link to="/auth" className="hover:underline">Register</Link>
+            {user ? (
+              <>
+                <span>Welcome, {user.email}</span>
+                <button onClick={handleSignOut} className="hover:underline flex items-center gap-1">
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/auth" className="hover:underline">Sign In</Link>
+                <Link to="/auth" className="hover:underline">Register</Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -40,23 +71,51 @@ export const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="hidden md:flex">
-              <User className="h-5 w-5" />
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hidden md:flex">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/wishlist")}>
+                    My Wishlist
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/cart")}>
+                    My Cart
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/auth">
+                <Button variant="ghost" size="icon" className="hidden md:flex">
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
             <Link to="/wishlist">
               <Button variant="ghost" size="icon" className="hidden md:flex relative">
                 <Heart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-accent text-accent-foreground text-xs flex items-center justify-center">
-                  0
-                </span>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-accent text-accent-foreground text-xs flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
               </Button>
             </Link>
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                  0
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Button>
             </Link>
             <Button variant="ghost" size="icon" className="md:hidden">
