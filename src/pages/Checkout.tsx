@@ -201,7 +201,7 @@ const Checkout = () => {
         description: "Thank you for your order. We'll send you a confirmation email.",
       });
 
-      navigate("/");
+      navigate(`/order-confirmation/${order.id}`);
     } catch (error) {
       console.error("Error placing order:", error);
       toast({
