@@ -256,10 +256,12 @@ const Cart = () => {
                     </div>
                   </div>
 
-                  <Button className="w-full mb-4 bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary">
-                    Proceed to Checkout
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  <Link to="/checkout">
+                    <Button className="w-full mb-4 bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary">
+                      Proceed to Checkout
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
 
                   <Link to="/products">
                     <Button variant="outline" className="w-full">
