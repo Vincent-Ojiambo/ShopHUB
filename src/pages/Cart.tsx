@@ -19,7 +19,7 @@ type CartItemWithProduct = {
 };
 
 const Cart = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { refreshCart } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -27,12 +27,13 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/auth");
       return;
     }
     fetchCart();
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchCart = async () => {
     if (!user) return;
