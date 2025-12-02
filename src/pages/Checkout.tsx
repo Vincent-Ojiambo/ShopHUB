@@ -23,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CreditCard, Truck, Wallet, ShoppingBag } from "lucide-react";
+import { CreditCard, Truck, Wallet, ShoppingBag, Smartphone } from "lucide-react";
 
 const addressSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -32,7 +32,7 @@ const addressSchema = z.object({
   state: z.string().min(2, "State is required"),
   zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code"),
   phone: z.string().regex(/^\+?[\d\s-()]+$/, "Invalid phone number"),
-  paymentMethod: z.enum(["credit_card", "paypal", "cash_on_delivery"]),
+  paymentMethod: z.enum(["credit_card", "paypal", "cash_on_delivery", "mpesa"]),
 });
 
 type AddressForm = z.infer<typeof addressSchema>;
@@ -140,6 +140,40 @@ const Checkout = () => {
     }
   };
 
+  const initiateMpesaPayment = async (orderId: string, amount: number, phone: string) => {
+    try {
+      const response = await supabase.functions.invoke("mpesa-stk-push", {
+        body: {
+          phoneNumber: phone,
+          amount: amount,
+          orderId: orderId,
+          accountReference: `ORDER-${orderId.slice(0, 8).toUpperCase()}`,
+        },
+      });
+
+      if (response.error) throw response.error;
+
+      const data = response.data;
+      if (data.ResponseCode === "0") {
+        toast({
+          title: "M-Pesa Request Sent",
+          description: "Please check your phone and enter your M-Pesa PIN to complete payment.",
+        });
+        return true;
+      } else {
+        throw new Error(data.ResponseDescription || "M-Pesa request failed");
+      }
+    } catch (error: any) {
+      console.error("M-Pesa error:", error);
+      toast({
+        variant: "destructive",
+        title: "M-Pesa Error",
+        description: error.message || "Failed to initiate M-Pesa payment",
+      });
+      return false;
+    }
+  };
+
   const onSubmit = async (data: AddressForm) => {
     if (!user || cartItems.length === 0) return;
 
@@ -164,7 +198,7 @@ const Checkout = () => {
           shipping_address: shippingAddress,
           payment_method: data.paymentMethod,
           status: "pending",
-          payment_status: "pending",
+          payment_status: data.paymentMethod === "mpesa" ? "awaiting_payment" : "pending",
         })
         .select()
         .single();
@@ -187,6 +221,19 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      // Handle M-Pesa payment
+      if (data.paymentMethod === "mpesa") {
+        const mpesaSuccess = await initiateMpesaPayment(order.id, total, data.phone);
+        if (!mpesaSuccess) {
+          // Keep order but notify user
+          toast({
+            variant: "destructive",
+            title: "Payment Issue",
+            description: "Order created but M-Pesa payment failed. Please retry payment.",
+          });
+        }
+      }
+
       // Clear cart
       const { error: clearError } = await supabase
         .from("cart_items")
@@ -199,7 +246,9 @@ const Checkout = () => {
 
       toast({
         title: "Order Placed Successfully!",
-        description: "Thank you for your order. We'll send you a confirmation email.",
+        description: data.paymentMethod === "mpesa" 
+          ? "Check your phone to complete M-Pesa payment."
+          : "Thank you for your order. We'll send you a confirmation email.",
       });
 
       navigate(`/order-confirmation/${order.id}`);
@@ -391,6 +440,17 @@ const Checkout = () => {
                                   <div>
                                     <div className="font-semibold">Cash on Delivery</div>
                                     <div className="text-sm text-muted-foreground">Pay when you receive your order</div>
+                                  </div>
+                                </Label>
+                              </div>
+
+                              <div className="flex items-center space-x-3 border border-border rounded-lg p-4 hover:bg-accent cursor-pointer bg-gradient-to-r from-green-500/10 to-green-600/10">
+                                <RadioGroupItem value="mpesa" id="mpesa" />
+                                <Label htmlFor="mpesa" className="flex items-center gap-2 cursor-pointer flex-1">
+                                  <Smartphone className="h-5 w-5 text-green-600" />
+                                  <div>
+                                    <div className="font-semibold text-green-700 dark:text-green-400">M-Pesa</div>
+                                    <div className="text-sm text-muted-foreground">Pay with M-Pesa mobile money</div>
                                   </div>
                                 </Label>
                               </div>
