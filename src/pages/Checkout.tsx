@@ -44,7 +44,7 @@ type CartItemWithProduct = {
 };
 
 const Checkout = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { refreshCart } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -66,13 +66,14 @@ const Checkout = () => {
   });
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/auth");
       return;
     }
     fetchCart();
     loadUserProfile();
-  }, [user]);
+  }, [user, authLoading]);
 
   const loadUserProfile = async () => {
     if (!user) return;
