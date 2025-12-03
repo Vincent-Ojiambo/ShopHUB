@@ -11,6 +11,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
+import { ProductReviews } from "@/components/ProductReviews";
 
 type Product = Tables<"products">;
 
@@ -263,9 +264,7 @@ const ProductDetail = () => {
             </div>
           </TabsContent>
           <TabsContent value="reviews" className="py-6">
-            <p className="text-muted-foreground">
-              {product.reviews_count} customer reviews. Average rating: {product.rating}/5
-            </p>
+            <ProductReviews productId={product.id} onReviewAdded={fetchProduct} />
           </TabsContent>
         </Tabs>
       </main>

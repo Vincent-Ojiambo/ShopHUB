@@ -1,14 +1,17 @@
-import { Search, ShoppingCart, User, Heart, Menu, LogOut } from "lucide-react";
+import { Search, ShoppingCart, User, Heart, Menu, LogOut, Package, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
+import { useSearch } from "@/hooks/use-search";
+import { useState, useRef, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -16,12 +19,55 @@ export const Header = () => {
   const { user, signOut } = useAuth();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
+  const { results, loading, search, clearResults } = useSearch();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
   };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (query.trim()) {
+      search(query);
+      setShowResults(true);
+    } else {
+      clearResults();
+      setShowResults(false);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+      setShowResults(false);
+    }
+  };
+
+  const handleResultClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+    setShowResults(false);
+    setSearchQuery("");
+    clearResults();
+  };
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
@@ -67,14 +113,58 @@ export const Header = () => {
           </Link>
 
           {/* Search bar */}
-          <div className="flex-1 max-w-2xl mx-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                placeholder="Search products, brands, and categories..."
-                className="pl-10 pr-4 w-full"
-              />
-            </div>
+          <div className="flex-1 max-w-2xl mx-4 relative" ref={searchRef}>
+            <form onSubmit={handleSearchSubmit}>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Search products, brands, and categories..."
+                  className="pl-10 pr-4 w-full"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  onFocus={() => results.length > 0 && setShowResults(true)}
+                />
+              </div>
+            </form>
+
+            {/* Search Results Dropdown */}
+            {showResults && (searchQuery.trim() || results.length > 0) && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
+                {loading ? (
+                  <div className="p-4 text-center text-muted-foreground">Searching...</div>
+                ) : results.length === 0 ? (
+                  <div className="p-4 text-center text-muted-foreground">
+                    No products found for "{searchQuery}"
+                  </div>
+                ) : (
+                  <>
+                    {results.map((product) => (
+                      <button
+                        key={product.id}
+                        onClick={() => handleResultClick(product.id)}
+                        className="w-full p-3 flex items-center gap-3 hover:bg-muted transition-colors text-left"
+                      >
+                        <img
+                          src={product.image_url || ""}
+                          alt={product.name}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{product.name}</p>
+                          <p className="text-sm text-primary font-semibold">${product.price}</p>
+                        </div>
+                      </button>
+                    ))}
+                    <button
+                      onClick={handleSearchSubmit}
+                      className="w-full p-3 text-center text-primary font-medium hover:bg-muted transition-colors border-t border-border"
+                    >
+                      View all results for "{searchQuery}"
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Actions */}
@@ -86,13 +176,24 @@ export const Header = () => {
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/orders")}>
+                    <Package className="mr-2 h-4 w-4" />
+                    My Orders
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/wishlist")}>
+                    <Heart className="mr-2 h-4 w-4" />
                     My Wishlist
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/cart")}>
+                    <ShoppingCart className="mr-2 h-4 w-4" />
                     My Cart
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out

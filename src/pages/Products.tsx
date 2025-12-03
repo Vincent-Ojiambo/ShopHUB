@@ -14,6 +14,7 @@ type Product = Tables<"products">;
 const Products = () => {
   const [searchParams] = useSearchParams();
   const categoryFilter = searchParams.get("category");
+  const searchFilter = searchParams.get("search");
   
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,8 +30,12 @@ const Products = () => {
   ];
 
   useEffect(() => {
+    setSelectedCategory(categoryFilter);
+  }, [categoryFilter]);
+
+  useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, sortBy]);
+  }, [selectedCategory, sortBy, searchFilter]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -38,6 +43,11 @@ const Products = () => {
       let query = supabase
         .from("products")
         .select("*");
+
+      // Apply search filter
+      if (searchFilter) {
+        query = query.or(`name.ilike.%${searchFilter}%,description.ilike.%${searchFilter}%`);
+      }
 
       // Apply category filter
       if (selectedCategory) {
@@ -134,11 +144,20 @@ const Products = () => {
           {/* Products Grid */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">
-                {selectedCategory
-                  ? categories.find((c) => c.slug === selectedCategory)?.name
-                  : "All Products"}
-              </h2>
+              <div>
+                <h2 className="text-2xl font-bold">
+                  {searchFilter
+                    ? `Search results for "${searchFilter}"`
+                    : selectedCategory
+                    ? categories.find((c) => c.slug === selectedCategory)?.name
+                    : "All Products"}
+                </h2>
+                {searchFilter && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Found {products.length} product{products.length !== 1 ? "s" : ""}
+                  </p>
+                )}
+              </div>
               <div className="flex items-center gap-4">
                 <span className="text-sm text-muted-foreground">
                   {products.length} products
