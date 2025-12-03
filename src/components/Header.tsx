@@ -39,10 +39,18 @@ export const Header = () => {
                 </button>
               </>
             ) : (
-              <>
-                <Link to="/auth" className="hover:underline">Sign In</Link>
-                <Link to="/auth" className="hover:underline">Register</Link>
-              </>
+              <div className="flex items-center gap-2">
+                <Link to="/auth">
+                  <Button variant="ghost" size="sm" className="text-secondary-foreground hover:bg-secondary-foreground/10 font-medium">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4">
+                    Register
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
         </div>
