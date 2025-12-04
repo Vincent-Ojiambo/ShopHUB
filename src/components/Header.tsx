@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, User, Heart, Menu, LogOut, Package, Settings } from "lucide-react";
+import { Search, ShoppingCart, User, Heart, Menu, LogOut, Package, Settings, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,6 +14,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export const Header = () => {
   const { user, signOut } = useAuth();
@@ -227,9 +234,103 @@ export const Header = () => {
                 )}
               </Button>
             </Link>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-            </Button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[280px] p-0">
+                <SheetHeader className="p-4 border-b border-border">
+                  <SheetTitle className="text-left bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+                    ShopHub
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col py-4">
+                  {user ? (
+                    <div className="px-4 py-3 border-b border-border mb-2">
+                      <p className="text-sm text-muted-foreground">Welcome,</p>
+                      <p className="font-medium truncate">{user.email}</p>
+                    </div>
+                  ) : (
+                    <div className="px-4 pb-4 border-b border-border mb-2 flex flex-col gap-2">
+                      <Link to="/auth">
+                        <Button className="w-full" size="sm">Sign In</Button>
+                      </Link>
+                      <Link to="/auth">
+                        <Button variant="outline" className="w-full" size="sm">Register</Button>
+                      </Link>
+                    </div>
+                  )}
+                  
+                  <nav className="flex flex-col">
+                    <Link to="/products?category=electronics" className="px-4 py-3 hover:bg-muted transition-colors">
+                      Electronics
+                    </Link>
+                    <Link to="/products?category=fashion" className="px-4 py-3 hover:bg-muted transition-colors">
+                      Fashion
+                    </Link>
+                    <Link to="/products?category=home" className="px-4 py-3 hover:bg-muted transition-colors">
+                      Home & Living
+                    </Link>
+                    <Link to="/products?category=beauty" className="px-4 py-3 hover:bg-muted transition-colors">
+                      Beauty
+                    </Link>
+                    <Link to="/products?category=sports" className="px-4 py-3 hover:bg-muted transition-colors">
+                      Sports
+                    </Link>
+                    <Link to="/products" className="px-4 py-3 text-accent font-medium hover:bg-muted transition-colors">
+                      View All Categories
+                    </Link>
+                  </nav>
+
+                  <div className="border-t border-border mt-2 pt-2">
+                    {user && (
+                      <>
+                        <Link to="/profile" className="px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors">
+                          <Settings className="h-5 w-5" />
+                          My Profile
+                        </Link>
+                        <Link to="/orders" className="px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors">
+                          <Package className="h-5 w-5" />
+                          My Orders
+                        </Link>
+                      </>
+                    )}
+                    <Link to="/wishlist" className="px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors">
+                      <Heart className="h-5 w-5" />
+                      Wishlist
+                      {wishlistCount > 0 && (
+                        <span className="ml-auto bg-accent text-accent-foreground text-xs px-2 py-0.5 rounded-full">
+                          {wishlistCount}
+                        </span>
+                      )}
+                    </Link>
+                    <Link to="/cart" className="px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors">
+                      <ShoppingCart className="h-5 w-5" />
+                      Cart
+                      {cartCount > 0 && (
+                        <span className="ml-auto bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full">
+                          {cartCount}
+                        </span>
+                      )}
+                    </Link>
+                  </div>
+
+                  {user && (
+                    <div className="border-t border-border mt-2 pt-2">
+                      <button 
+                        onClick={handleSignOut}
+                        className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors text-left text-destructive"
+                      >
+                        <LogOut className="h-5 w-5" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
