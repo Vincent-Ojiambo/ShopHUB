@@ -1,8 +1,9 @@
-import { Search, ShoppingCart, User, Heart, Menu, LogOut, Package, Settings, X } from "lucide-react";
+import { Search, ShoppingCart, User, Heart, Menu, LogOut, Package, Settings, X, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { useAdmin } from "@/hooks/use-admin";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { useSearch } from "@/hooks/use-search";
@@ -24,6 +25,7 @@ import {
 
 export const Header = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { results, loading, search, clearResults } = useSearch();
@@ -184,6 +186,15 @@ export const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem onClick={() => navigate("/admin")}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Panel
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
                     <Settings className="mr-2 h-4 w-4" />
                     My Profile
@@ -287,6 +298,12 @@ export const Header = () => {
                   <div className="border-t border-border mt-2 pt-2">
                     {user && (
                       <>
+                        {isAdmin && (
+                          <Link to="/admin" className="px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors text-primary font-medium">
+                            <Shield className="h-5 w-5" />
+                            Admin Panel
+                          </Link>
+                        )}
                         <Link to="/profile" className="px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors">
                           <Settings className="h-5 w-5" />
                           My Profile
