@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, Loader2 } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
+import { OrderTrackingManager } from '@/components/admin/OrderTrackingManager';
 
 type Order = Tables<'orders'>;
 type OrderItem = Tables<'order_items'>;
@@ -133,7 +134,8 @@ const AdminOrders = () => {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right space-x-2">
+                        <OrderTrackingManager orderId={order.id} onUpdate={fetchOrders} />
                         <Button variant="ghost" size="icon" onClick={() => viewOrderDetails(order)}>
                           <Eye className="h-4 w-4" />
                         </Button>
