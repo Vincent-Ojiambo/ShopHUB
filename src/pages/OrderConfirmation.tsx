@@ -11,6 +11,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, Package, Truck, CreditCard, MapPin, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { OrderTracking } from "@/components/OrderTracking";
 
 type OrderWithItems = Tables<"orders"> & {
   items: Tables<"order_items">[];
@@ -263,6 +264,9 @@ const OrderConfirmation = () => {
                 </div>
               </Card>
             </div>
+
+            {/* Order Tracking */}
+            <OrderTracking orderId={order.id} currentStatus={order.status} />
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
