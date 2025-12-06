@@ -191,26 +191,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Made with ❤️ by [Vincent Ojiambo](https://github.com/Vincent-Ojiambo) | [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fvincentojambo)](https://twitter.com/vincentojambo)
 ```
-
-## 📞 Support
-
-For support, email [your-email@example.com](mailto:your-email@example.com) or open an issue in the [GitHub repository](https://github.com/Vincent-Ojiambo/jumia-replica-mern/issues).
-
-## 📝 Changelog
-
-- **v1.0.0** - Initial release
-  - Basic e-commerce functionality
-  - User authentication
-  - Product catalog
-  - Shopping cart
-  - Wishlist
-
-## 🌐 Custom Domain
-
-You can connect your own domain to your deployed application:
-
-1. Go to your hosting provider's DNS settings
-2. Add a CNAME record pointing to your Vercel deployment
-3. Configure the domain in your Vercel project settings
-
-For detailed instructions, refer to the [Vercel documentation](https://vercel.com/docs/concepts/projects/domains).
