@@ -116,9 +116,11 @@ export const Header = () => {
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-              ShopHub
-            </h1>
+            <img 
+              src="/ShopHub.png" 
+              alt="ShopHub Logo" 
+              className="h-20 w-auto object-contain"
+            />
           </Link>
 
           {/* Search bar */}
@@ -253,9 +255,13 @@ export const Header = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-[280px] p-0">
                 <SheetHeader className="p-4 border-b border-border">
-                  <SheetTitle className="text-left bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-                    ShopHub
-                  </SheetTitle>
+                  <div className="flex items-center">
+                    <img 
+                      src="/ShopHub.png" 
+                      alt="ShopHub Logo" 
+                      className="h-20 w-auto object-contain"
+                    />
+                  </div>
                 </SheetHeader>
                 <div className="flex flex-col py-4">
                   {user ? (

@@ -1,73 +1,216 @@
-# Welcome to your Lovable project
+# ShopHUB - Modern E-commerce Platform
 
-## Project info
+![ShopHUB Logo](/public/ShopHub.png)
 
-**URL**: https://lovable.dev/projects/25105524-8b57-4f85-9082-5e5814b9c1ae
+ShopHUB is a full-featured e-commerce platform built by Vincent Ojiambo, offering a seamless shopping experience with a clean, responsive design using modern web technologies.
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+- **User Authentication**
+  - Secure signup and login
+  - Password reset functionality
+  - Social login integration
 
-**Use Lovable**
+- **Product Management**
+  - Browse products by categories
+  - Advanced search and filtering
+  - Product details with high-quality images
+  - Product reviews and ratings
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/25105524-8b57-4f85-9082-5e5814b9c1ae) and start prompting.
+- **Shopping Experience**
+  - Add/remove items to/from cart
+  - Wishlist functionality
+  - Secure checkout process
+  - Order tracking
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Admin Dashboard**
+  - Product management (CRUD operations)
+  - Order management
+  - User management
+  - Sales analytics
 
-**Use your preferred IDE**
+- **Responsive Design**
+  - Mobile-first approach
+  - Cross-browser compatibility
+  - Optimized for all screen sizes
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠️ Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Frontend**
+  - React 18 with TypeScript
+  - Vite for fast development and building
+  - React Router for navigation
+  - Tailwind CSS for styling
+  - Shadcn/ui for beautiful, accessible components
+  - Redux Toolkit for state management
+  - React Hook Form for forms
+  - Zod for schema validation
 
-Follow these steps:
+- **Backend**
+  - Supabase (PostgreSQL)
+  - Supabase Auth for authentication
+  - Supabase Storage for file uploads
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **Deployment**
+  - Vercel (Frontend)
+  - Supabase (Backend)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🚀 Getting Started
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Prerequisites
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+- Node.js 18+ and npm/yarn
+- Supabase account (free tier available at [supabase.com](https://supabase.com))
+- Git
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Vincent-Ojiambo/jumia-replica-mern.git
+   cd jumia-replica-mern
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
+
+3. **Set up environment variables**
+   Create a `.env` file in the root directory and add your Supabase credentials:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+   The application will be available at `http://localhost:5173`
+
+## 📂 Project Structure
+
+```
+src/
+├── assets/           # Static assets (images, icons, etc.)
+├── components/       # Reusable UI components
+├── config/          # Application configuration
+├── contexts/        # React contexts
+├── hooks/           # Custom React hooks
+├── integrations/    # Third-party integrations
+├── lib/             # Utility functions
+├── pages/           # Page components
+│   ├── admin/       # Admin dashboard pages
+│   ├── auth/        # Authentication pages
+│   └── ...
+├── services/        # API services
+├── store/           # State management
+├── types/           # TypeScript type definitions
+└── utils/           # Helper utilities
 ```
 
-**Edit a file directly in GitHub**
+## 🌟 Key Features Implementation
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Authentication
+- JWT-based authentication using Supabase Auth
+- Protected routes with role-based access control
+- Password reset and email verification flows
 
-**Use GitHub Codespaces**
+### Product Management
+- Product listing with infinite scroll
+- Advanced filtering and sorting
+- Product details with image gallery
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Shopping Cart
+- Persistent cart using localStorage
+- Real-time updates
+- Cart summary with shipping options
 
-## What technologies are used for this project?
+### Checkout Process
+- Multi-step checkout flow
+- Payment integration (Stripe)
+- Order confirmation and tracking
 
-This project is built with:
+## 🧪 Testing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+# Run unit tests
+npm test
 
-## How can I deploy this project?
+# Run end-to-end tests
+npm run test:e2e
 
-Simply open [Lovable](https://lovable.dev/projects/25105524-8b57-4f85-9082-5e5814b9c1ae) and click on Share -> Publish.
+# Run tests with coverage
+npm run test:coverage
+```
 
-## Can I connect a custom domain to my Lovable project?
+## 🚀 Deployment
 
-Yes, you can!
+### Vercel (Recommended)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Push your code to a GitHub/GitLab repository
+2. Import the repository to Vercel
+3. Add your environment variables
+4. Deploy!
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Manual Deployment
+
+1. Build the application:
+   ```bash
+   npm run build
+   ```
+2. Deploy the contents of the `dist` folder to your hosting provider
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Shadcn/ui](https://ui.shadcn.com/) for the beautiful component library
+- [Supabase](https://supabase.com/) for the amazing backend services
+- [Vite](https://vitejs.dev/) for the fast development experience
+- [React](https://reactjs.org/) for building user interfaces
+
+---
+
+Made with ❤️ by [Vincent Ojiambo](https://github.com/Vincent-Ojiambo) | [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fvincentojambo)](https://twitter.com/vincentojambo)
+```
+
+## 📞 Support
+
+For support, email [your-email@example.com](mailto:your-email@example.com) or open an issue in the [GitHub repository](https://github.com/Vincent-Ojiambo/jumia-replica-mern/issues).
+
+## 📝 Changelog
+
+- **v1.0.0** - Initial release
+  - Basic e-commerce functionality
+  - User authentication
+  - Product catalog
+  - Shopping cart
+  - Wishlist
+
+## 🌐 Custom Domain
+
+You can connect your own domain to your deployed application:
+
+1. Go to your hosting provider's DNS settings
+2. Add a CNAME record pointing to your Vercel deployment
+3. Configure the domain in your Vercel project settings
+
+For detailed instructions, refer to the [Vercel documentation](https://vercel.com/docs/concepts/projects/domains).
