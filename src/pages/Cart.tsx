@@ -288,7 +288,10 @@ const Cart = () => {
                       <span>{formatKES(total)}</span>
                     </div>
                   </div>
-                  <Button className="w-full mt-4 sm:mt-6 bg-gradient-to-r from-primary to-primary-light">
+                  <Button 
+                    className="w-full mt-4 sm:mt-6 bg-gradient-to-r from-primary to-primary-light"
+                    onClick={() => navigate('/checkout')}
+                  >
                     Proceed to Checkout
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
