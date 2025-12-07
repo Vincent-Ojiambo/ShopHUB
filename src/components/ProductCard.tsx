@@ -5,6 +5,16 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 
+// Format number as Kenyan Shillings
+const formatKES = (amount: number) => {
+  return new Intl.NumberFormat('en-KE', {
+    style: 'currency',
+    currency: 'KES',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
+};
+
 interface ProductCardProps {
   id: string;
   name: string;
@@ -93,15 +103,14 @@ export const ProductCard = ({
 
         <div className="flex items-baseline gap-2 mb-3">
           <span className="text-lg font-bold text-primary">
-            ${price.toFixed(2)}
+            {formatKES(price)}
           </span>
           {originalPrice && (
             <span className="text-sm text-muted-foreground line-through">
-              ${originalPrice.toFixed(2)}
+              {formatKES(originalPrice)}
             </span>
           )}
         </div>
-
         <Button 
           onClick={handleAddToCart}
           className="w-full bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary transition-all duration-300" 

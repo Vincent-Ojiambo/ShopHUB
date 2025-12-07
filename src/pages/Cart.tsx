@@ -124,12 +124,22 @@ const Cart = () => {
     }
   };
 
+  // Format number with commas
+  const formatKES = (amount: number) => {
+    return new Intl.NumberFormat('en-KE', {
+      style: 'currency',
+      currency: 'KES',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
-  const shipping = subtotal > 50 ? 0 : 9.99;
-  const tax = subtotal * 0.1;
+  const shipping = subtotal > 5000 ? 0 : 1500; // Free shipping over KSh 5,000
+  const tax = subtotal * 0.16; // 16% VAT in Kenya
   const total = subtotal + shipping + tax;
 
   if (loading) {
@@ -179,53 +189,78 @@ const Cart = () => {
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
                 {cartItems.map((item) => (
-                  <Card key={item.id} className="p-4">
-                    <div className="flex items-center gap-4">
-                      <Link to={`/product/${item.product.id}`}>
-                        <img
-                          src={item.product.image_url || ""}
-                          alt={item.product.name}
-                          className="w-24 h-24 object-cover rounded-md"
-                        />
-                      </Link>
-                      <div className="flex-1">
-                        <Link to={`/product/${item.product.id}`}>
-                          <h3 className="font-semibold hover:text-primary">
-                            {item.product.name}
-                          </h3>
-                        </Link>
-                        <p className="text-xl font-bold mt-2">
-                          ${item.product.price}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center border border-border rounded-md">
-                          <button
-                            onClick={() => updateQuantity(item.id, -1)}
-                            className="p-2 hover:bg-muted"
-                          >
-                            <Minus className="h-4 w-4" />
-                          </button>
-                          <span className="px-4 py-2 border-x border-border min-w-[3rem] text-center">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="p-2 hover:bg-muted"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </button>
+                  <Card key={item.id} className="p-4 hover:shadow-md transition-shadow duration-200">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      {/* Product Image */}
+                      <Link to={`/product/${item.product.id}`} className="flex-shrink-0">
+                        <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-muted/50">
+                          <img
+                            src={item.product.image_url || ""}
+                            alt={item.product.name}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                          />
                         </div>
-                        <button
-                          onClick={() => removeItem(item.id)}
-                          className="p-2 hover:bg-destructive hover:text-destructive-foreground rounded-md"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
+                      </Link>
+                      
+                      {/* Product Info */}
+                      <div className="flex-1 flex flex-col">
+                        <div className="flex justify-between items-start gap-4">
+                          <Link to={`/product/${item.product.id}`} className="flex-1 group">
+                            <h3 className="font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                              {item.product.name}
+                            </h3>
+                            <p className="text-muted-foreground text-sm mt-1">
+                              {formatKES(item.product.price)} each
+                            </p>
+                          </Link>
+                          
+                          {/* Remove Button */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeItem(item.id);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        
+                        {/* Quantity Controls */}
+                        <div className="mt-4 flex items-center justify-between">
+                          <div className="flex items-center border rounded-md overflow-hidden bg-muted/50">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 rounded-none hover:bg-muted"
+                              onClick={() => updateQuantity(item.id, -1)}
+                            >
+                              <Minus className="h-3.5 w-3.5" />
+                            </Button>
+                            <span className="w-10 text-center text-sm font-medium">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 rounded-none hover:bg-muted"
+                              onClick={() => updateQuantity(item.id, 1)}
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                          
+                          {/* Item Total */}
+                          <div className="text-right">
+                            <p className="text-sm text-muted-foreground">Total</p>
+                            <p className="font-semibold text-foreground">
+                              {formatKES(item.product.price * item.quantity)}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="mt-4 text-right text-muted-foreground">
-                      Subtotal: ${(item.product.price * item.quantity).toFixed(2)}
                     </div>
                   </Card>
                 ))}
@@ -233,38 +268,32 @@ const Cart = () => {
 
               {/* Order Summary */}
               <div>
-                <Card className="p-6 sticky top-24">
-                  <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-                  <div className="space-y-3 mb-6">
+                <Card className="p-4 sm:p-6 h-fit sticky top-4">
+                  <h2 className="text-lg sm:text-xl font-semibold mb-4">Order Summary</h2>
+                  <div className="space-y-3 text-sm sm:text-base">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
+                      <span>Subtotal</span>
+                      <span>{formatKES(subtotal)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Shipping</span>
-                      <span>${shipping.toFixed(2)}</span>
+                      <span>Shipping</span>
+                      <span>{shipping === 0 ? 'Free' : formatKES(shipping)}</span>
                     </div>
-                    {shipping === 0 && (
-                      <p className="text-sm text-green-600">Free shipping applied!</p>
-                    )}
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Tax</span>
-                      <span>${tax.toFixed(2)}</span>
+                      <span>Tax</span>
+                      <span>{formatKES(tax)}</span>
                     </div>
-                    <div className="pt-3 border-t border-border flex justify-between text-lg font-bold">
+                    <div className="border-t pt-3 mt-3 flex justify-between font-bold text-base sm:text-lg">
                       <span>Total</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>{formatKES(total)}</span>
                     </div>
                   </div>
+                  <Button className="w-full mt-4 sm:mt-6 bg-gradient-to-r from-primary to-primary-light">
+                    Proceed to Checkout
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
 
-                  <Link to="/checkout">
-                    <Button className="w-full mb-4 bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary">
-                      Proceed to Checkout
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-
-                  <Link to="/products">
+                  <Link to="/products" className="block mt-2">
                     <Button variant="outline" className="w-full">
                       Continue Shopping
                     </Button>

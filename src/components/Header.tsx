@@ -80,38 +80,6 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
-      {/* Top bar */}
-      <div className="bg-secondary text-secondary-foreground">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between text-sm">
-          <p>Welcome to our marketplace! Shop with confidence</p>
-          <div className="flex items-center gap-4">
-            {user ? (
-              <>
-                <span>Welcome, {user.email}</span>
-                <button onClick={handleSignOut} className="hover:underline flex items-center gap-1">
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/auth">
-                  <Button variant="ghost" size="sm" className="text-secondary-foreground hover:bg-secondary-foreground/10 font-medium">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/auth">
-                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4">
-                    Register
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Main header */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
@@ -119,7 +87,7 @@ export const Header = () => {
             <img 
               src="/ShopHub.png" 
               alt="ShopHub Logo" 
-              className="h-20 w-auto object-contain"
+              className="h-14 w-auto object-contain"
             />
           </Link>
 
@@ -180,6 +148,20 @@ export const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            {!user && (
+              <div className="hidden md:flex items-center gap-2">
+                <Link to="/auth">
+                  <Button variant="ghost" className="font-medium">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/auth?mode=sign-up">
+                  <Button className="font-medium">
+                    Register
+                  </Button>
+                </Link>
+              </div>
+            )}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
